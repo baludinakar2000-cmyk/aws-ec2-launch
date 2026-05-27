@@ -1,0 +1,29 @@
+name: Launch EC2 Instance
+
+on:
+  workflow_dispatch:
+
+jobs:
+  launch-ec2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Launch EC2 Instance
+        run: |
+          aws ec2 run-instances \
+            --image-id ami-0f58b397bc5c1f2e8 \
+            --instance-type t2.micro \
+            --key-name github-ec2-key \
+            --security-group-ids sg-xxxxxxxx \
+            --subnet-id subnet-xxxxxxxx \
+            --count 1
